@@ -121,6 +121,7 @@ celerybeat.pid
 
 # Data
 data/*
+*.db
 
 # Environments
 .env

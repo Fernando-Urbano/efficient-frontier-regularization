@@ -1,4 +1,5 @@
 import pytest
+import re
 import pandas as pd
 import numpy as np
 import os
@@ -26,6 +27,14 @@ def test_initialization():
         testing_window=10,
         n_tscv=3,
     )
+    assert portfolio.date_training_end == "2023-04-10"
+    assert portfolio.n_days == 70
+    assert portfolio.training_window is False
+    assert portfolio.testing_window == 10
+    assert portfolio.n_tscv == 3
+    assert portfolio.tscv_size == 10
+    assert portfolio.tscv_metric == "sharpe"
+    assert portfolio.testing_metric == "sharpe"
     assert portfolio.data is not None
     assert len(portfolio.available_traning_data.index) == 70
     assert len(portfolio.available_traning_data.columns) == 49
@@ -174,8 +183,11 @@ def test_diff_cross_validation_dates():
             )
 
 def test_calculate_performance():
-    data = pd.read_csv("data/industry_portfolios_49_daily.csv", index_col=0, parse_dates=True)
-    data = data.sort_index()
+    data = (
+        pd.read_csv("data/industry_portfolios_49_daily.csv", index_col=0, parse_dates=True)
+        .sort_index()
+        .loc["2015-01-01":"2023-01-01"]
+    )
     weights = np.ones(49) / 49
     sharpe = Portfolio.calculate_performance(data, weights, "sharpe")
     mean = Portfolio.calculate_performance(data, weights, "mean")
@@ -183,12 +195,47 @@ def test_calculate_performance():
     assert round(sharpe, 5) == round(mean / volatility, 5)
 
 def test_calculate_min_var_weights():
-    data = pd.read_csv("data/industry_portfolios_49_daily.csv", index_col=0, parse_dates=True)
-    data = data.sort_index()
-    weights = Portfolio.calculate_min_var_weights(data)
-    assert weights is not None
+    data = (
+        pd.read_csv("data/industry_portfolios_49_daily.csv", index_col=0, parse_dates=True)
+        .sort_index()
+        .loc["2015-01-01":"2023-01-01"]
+    )
+    weights = Portfolio.calculate_min_var_weights(data, l1=0, l2=0)
     assert len(weights) == 49
     assert round(weights.sum(), 5) == 1
+
+def test_calculate_l2_min_var_weights():
+    data = (
+        pd.read_csv("data/industry_portfolios_49_daily.csv", index_col=0, parse_dates=True)
+        .sort_index()
+        .loc["2015-01-01":"2023-01-01"]
+    )
+    weights = Portfolio.calculate_min_var_weights(data, l1=0, l2=0)
+    previous_weights_var = weights.var()
+    for l2_opt in [.1, .3, .5, .75, 1, 1.5, 2, 3, 5, 10]:
+        l2_weights = Portfolio.calculate_min_var_weights(data, l1=0, l2=l2_opt)
+        assert round(l2_weights.sum(), 5) == 1
+        assert round(l2_weights.var(), 5) <= round(previous_weights_var, 5)
+        previous_weights_var = l2_weights.var()
+    extreme_l2_weights = Portfolio.calculate_min_var_weights(data, l1=0, l2=10e12)
+    avg_extreme_l2_weights = extreme_l2_weights.mean()
+    diff_avg_extreme_l2_weights = [round(w - avg_extreme_l2_weights, 2) for w in list(extreme_l2_weights)]
+    assert all([diff == 0 for diff in diff_avg_extreme_l2_weights])
+
+def test_calculate_l1_min_var_weights():
+    data = (
+        pd.read_csv("data/industry_portfolios_49_daily.csv", index_col=0, parse_dates=True)
+        .sort_index()
+        .loc["2015-01-01":"2023-01-01"]
+    )
+    weights = Portfolio.calculate_min_var_weights(data, l1=0, l2=0)
+    previous_weights_abs_sum = abs(weights).sum()
+    for l1_opt in [.1, .3, .5, .75, 1, 1.5, 2, 3, 5, 10] + list(range(20, 501, 10)):
+        print(l1_opt)
+        l1_weights = Portfolio.calculate_min_var_weights(data, l1=l1_opt, l2=0)
+        assert round(l1_weights.sum(), 4) == 1
+        assert round(abs(l1_weights).sum(), 4) <= round(previous_weights_abs_sum, 4)
+        previous_weights_abs_sum = abs(l1_weights).sum()
 
 def test_get_best_hyperparameters():
     portfolio = Portfolio(
@@ -202,7 +249,7 @@ def test_get_best_hyperparameters():
         tscv_size=15
     )
     portfolio.tune_hyperparameters()
-    assert portfolio.best_l is None
+    assert portfolio.best_l == {}
     portfolio.get_best_hyperparameters()
     assert "l1" in portfolio.best_l.keys() and "l2" in portfolio.best_l.keys()
     assert portfolio.best_l["l1"] >= 0 and portfolio.best_l["l2"] >= 0
@@ -253,15 +300,37 @@ def test_testing_returns():
         portfolio.portfolio_testing_returns.index[0]
     )
 
+def test_save_portfolio():
+    portfolio = Portfolio(
+        n_assets=49,
+        date_training_end="2023-04-10",
+        l1_opts=[0, 0.1, 0.5, 1],
+        l2_opts=[0, 0.1, 0.5, 1],
+        n_days=800,
+        training_window=50,
+        testing_window=15,
+        n_tscv=6,
+        tscv_size=15
+    )
+    portfolio.tune_hyperparameters()
+    portfolio.get_best_hyperparameters()
+    portfolio.calculate_training_weights()
+    portfolio.calculate_testing_returns()
+    portfolio.save()
+    portfolio.delete_last_line()
+
 if __name__ == "__main__":
+    test_initialization()
+    test_save_portfolio()
+    test_calculate_l1_min_var_weights()
+    test_get_best_hyperparameters()
+    test_calculate_performance()
+    test_calculate_l2_min_var_weights()
     test_testing_returns()
     test_calculate_training_weights()
-    test_get_best_hyperparameters()
-    test_initialization()
     test_cross_validation_data()
     test_cross_validation_rolling_window_data()
     test_cross_validation_dates()
     test_diff_cross_validation_dates()
-    test_calculate_performance()
     test_calculate_min_var_weights()
     test_upload_data()
