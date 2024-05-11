@@ -319,7 +319,25 @@ def test_save_portfolio():
     portfolio.save()
     portfolio.delete_last_line()
 
+def test_possibly_singular_value_matrix():
+    portfolio = Portfolio(
+        n_assets=10,
+        date_training_end="2003-08-25",
+        l1_opts=[0],
+        l2_opts=[0],
+        n_days=12600,
+        training_window=126,
+        testing_window=5,
+        n_tscv=5,
+        tscv_size=32
+    )
+    portfolio.tune_hyperparameters()
+    portfolio.get_best_hyperparameters()
+    portfolio.calculate_training_weights()
+    portfolio.calculate_testing_returns()
+
 if __name__ == "__main__":
+    test_possibly_singular_value_matrix()
     test_initialization()
     test_save_portfolio()
     test_calculate_l1_min_var_weights()

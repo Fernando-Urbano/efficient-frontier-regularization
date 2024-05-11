@@ -6,7 +6,10 @@ import json
 import itertools
 import datetime
 
-def round_weights(weights, n=4):
+
+ROUND_PRECISION = 5
+
+def round_weights(weights, n=ROUND_PRECISION):
     if not isinstance(weights, list):
         weights = list(weights)
     weights = [round(w, n) for w in weights]
@@ -111,13 +114,17 @@ class Portfolio():
         std = returns.std()
         sharpe = avg / std
         if metric == "sharpe":
-            return sharpe
+            return round(sharpe, ROUND_PRECISION)
         elif metric == "mean":
-            return avg
+            return round(avg, ROUND_PRECISION)
         elif metric == "volatility":
-            return std
+            return round(std, ROUND_PRECISION)
         elif metric == "all":
-            return {"sharpe": sharpe, "mean": avg, "volatility": std}
+            return {
+                "sharpe": round(sharpe, ROUND_PRECISION),
+                "mean": round(avg, ROUND_PRECISION),
+                "volatility": round(std, ROUND_PRECISION)
+            }
         else:
             raise ValueError("Invalid metric")
         
@@ -129,7 +136,7 @@ class Portfolio():
         cov = data.cov()
         if l1 == 0:
             ones = np.ones(n)
-            inv = np.linalg.inv(cov + l2 * np.eye(n))
+            inv = np.linalg.pinv(cov + l2 * np.eye(n))
             weights = inv @ ones / (ones @ inv @ ones)
             return round_weights(weights)
         else:
@@ -177,23 +184,35 @@ class Portfolio():
             training_data = self.training_tscv_data[f"tscv_{i:02}"]
             testing_data = self.testing_tscv_data[f"tscv_{i:02}"]
             for l1, l2 in list(itertools.product(self.l1_opts, self.l2_opts)):
-                weights = self.calculate_min_var_weights(training_data, l1=l1, l2=l2)
-                weights = [round(w, 5) for w in list(weights)]
+                try:
+                    weights = self.calculate_min_var_weights(training_data, l1=l1, l2=l2)
+                except Exception as e:
+                    continue
+                weights = [round(w, ROUND_PRECISION) for w in list(weights)]
                 weights /= sum(weights)
                 performance = self.calculate_performance(testing_data, weights, self.tscv_metric)
                 self.tscv_l_performance[f"tscv_{i:02}"][(l1, l2)] = performance
 
-    def get_best_hyperparameters(self):
+    def get_best_hyperparameters(self, l_choice="lowest"):
         best_hyperparameters = {}
         best_func = min if self.tscv_metric == "volatility" else max
         for i in range(1, self.n_tscv+1):
-            best_hyperparameters[f"tscv_{i:02}"] = best_func(
-                self.tscv_l_performance[f"tscv_{i:02}"],
-                key=self.tscv_l_performance[f"tscv_{i:02}"].get
-            )
+            if l_choice == "lowest":
+                best_performance = best_func(self.tscv_l_performance[f"tscv_{i:02}"].values())
+                best_tscv_hyperparameter = [k for k, p in self.tscv_l_performance[f"tscv_{i:02}"].items() if p == best_performance]
+                if len(best_tscv_hyperparameter):
+                    best_hyperparameters[f"tscv_{i:02}"] = best_tscv_hyperparameter[0]
+                else:
+                    lowest_l_sum = np.inf
+                    for l in best_tscv_hyperparameter.keys():
+                        if sum(l) < lowest_l_sum:
+                            best_hyperparameters[f"tscv_{i:02}"] = l
+                            lowest_l_sum = sum(l)
+            else:
+                raise Exception("Not implemented yet")
         self.best_l = {
-            "l1": np.mean([l[0] for l in list(best_hyperparameters.values())]),
-            "l2": np.mean([l[1] for l in list(best_hyperparameters.values())])
+            "l1": round(np.mean([l[0] for l in list(best_hyperparameters.values())]), ROUND_PRECISION),
+            "l2": round(np.mean([l[1] for l in list(best_hyperparameters.values())]), ROUND_PRECISION)
         }
 
     def upload_data(self):
@@ -225,15 +244,6 @@ class Portfolio():
 
     def calculate_testing_optimal_l(self):
         testing_optimal_l = {"l1": 0, "l2": 0}
-        # best_performance = -np.inf
-        # for l1, l2 in list(itertools.product(self.l1_opts, self.l2_opts)):
-        #     weights = self.calculate_min_var_weights(self.testing_data, l1=l1, l2=l2)
-        #     performance = self.calculate_performance(self.testing_data, weights, self.testing_metric)
-        #     if self.testing_metric == "volatility":
-        #         performance *= -1
-        #     if performance > best_performance:
-        #         testing_optimal_l["l1"], testing_optimal_l["l2"] = l1, l2
-        #         best_performance = performance
         self.testing_optimal_l = testing_optimal_l
 
     def calculate_testing_weights_optimal_l(self):
@@ -259,7 +269,6 @@ class Portfolio():
         return testing_end_date
 
     def save(self, db_name="portfolio.db"):
-        # Convert necessary data into appropriate formats
         l1_opts_str = json.dumps(self.l1_opts)
         l2_opts_str = json.dumps(self.l2_opts)
         best_l_str = json.dumps(self.best_l)
@@ -309,6 +318,26 @@ class Portfolio():
         ))
         conn.commit()
         conn.close()
+
+    def __repr__(self) -> str:
+        date_training_start = (
+            self.date_training_start.strftime("%Y-%m-%d")
+            if isinstance(self.date_training_start, (datetime.datetime, pd.Timestamp))
+            else self.date_training_start
+        )
+        date_training_end = (
+            self.date_training_end.strftime("%Y-%m-%d")
+            if isinstance(self.date_training_end, (datetime.datetime, pd.Timestamp))
+            else self.date_training_end
+        )
+        best_l = json.dumps({l: f"{v:.4f}" for l, v in self.best_l.items()})
+        return (
+            f"Portfolio("
+            + f"n_assets={self.n_assets}, date_training_end={date_training_end}, n_days={self.n_days}, "
+            + f"date_training_start={date_training_start}, training_window={self.training_window}, "
+            + f"testing_window={self.testing_window}, n_tscv={self.n_tscv}, tscv_size={self.tscv_size}, "
+            + f"tscv_metric={self.tscv_metric}, testing_metric={self.testing_metric}) -> {best_l}"
+        )
 
     def delete_last_line(self):
         conn = sqlite3.connect("portfolio.db")

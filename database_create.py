@@ -34,7 +34,6 @@ def create_table(db_name="portfolio.db", table_name="portfolio"):
         testing_metric TEXT,
         testing_performance TEXT,
         testing_optimal_weights_performance TEXT,
-        testing_optimal_l TEXT,
         exception TEXT
     );
     """

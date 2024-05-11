@@ -1,0 +1,17 @@
+\begin{thebibliography}{}
+
+\bibitem[Bruder et~al., 2013]{bruder2013regularization}
+Bruder, B., Gaussel, N., Richard, J.-C., and Roncalli, T. (2013).
+\newblock Regularization of portfolio allocation.
+
+\bibitem[Markowitz, 1952]{markowitz1952portfolio}
+Markowitz, H. (1952).
+\newblock Portfolio selection.
+\newblock {\em The Journal of Finance}, 7(1):77--91.
+
+\bibitem[Sharpe, 1964]{sharpe1964capital}
+Sharpe, W.~F. (1964).
+\newblock Capital asset prices: A theory of market equilibrium under conditions of risk.
+\newblock {\em The Journal of Finance}, 19(3):425--442.
+
+\end{thebibliography}
