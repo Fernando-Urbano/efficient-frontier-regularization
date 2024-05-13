@@ -75,7 +75,7 @@ if __name__ == "__main__":
                 remaining_combinations = len(unique_results.index) - i
                 remaining_time = elapsed_time * remaining_combinations / i / 60
                 print(f"COMPLETED {i}/{(len(unique_results.index) - 1)}; REMAINING TIME: {remaining_time:.0f} minutes")
-    unique_results.to_csv("output/simulations_ids.csv")
+    unique_results.to_csv("output/simulations_ids.csv", index=False)
     portfolio_testing_returns_entire_sample.to_csv("output/simulations_integrated_testing_returns.csv")
     
     

@@ -3,6 +3,10 @@
 % Language setting
 % Replace `english' with e.g. `spanish' to change the document language
 \usepackage[english]{babel}
+\usepackage{adjustbox}
+\usepackage{booktabs}
+\usepackage{makecell} 
+
 
 % Set page size and margins
 % Replace `letterpaper' with`a4paper' for UK/EU standard size
@@ -99,7 +103,7 @@ $$
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{graphics/report_efficient_frontier.png}
+    \includegraphics[width=0.8\textwidth]{graphics/illustrations/efficient_frontier.png}
     \caption{Efficient Frontier}
     \label{fig:efficient_frontier}
 \end{figure}
@@ -138,7 +142,7 @@ In practice, the solution vector $w$ degree of penalty is defined by how much th
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{graphics/report_euclidean_norm.png}
+    \includegraphics[width=0.8\textwidth]{graphics/illustrations/euclidean_norm.png}
     \caption{Euclidean Norm as a Function of Weights' Standard Deviation}
     \label{fig:euclidean_norm}
 \end{figure}
@@ -176,11 +180,144 @@ The testing portfolios for each of the combinations are aggregated yearly, allow
 \section{Data}
 The data is collected from the \hyperlink{https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html}{Kenneth French Website}. The website provides daily industry returns in tables dividing the industries in 5, 10, 12, 17, 30, 38, 48, 49 assets from 1926 to 2024 (updated regularly). Each of those tables is used as one of the possible $n$ (number of assets) in the portfolio. The risk-free rate is also provided in the website, inside the "Fama/French 3 Factors" table, and subtract the returns.
 
+\section{Results}
+
+\begin{table}[h!]
+    \centering
+    {\scriptsize
+        \input{tables/anova/no_interaction.tex}
+    }
+    \caption{ANOVA without Interaction}
+    \label{tab:anova_multi_factor}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    {\scriptsize
+        \input{tables/tukeyhsd/n_assets.tex}
+    }
+    \caption{Tukey HSD for Number of Assets - Only Significant Results (10\%)}
+    \label{tab:tukeyhsd_n_assets}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    {\scriptsize
+        \input{tables/tukeyhsd/n_tscv.tex}
+    }
+    \caption{Tukey HSD for Nº TSCV - Only Significant Results (10\%)}
+    \label{tab:tukeyhsd_n_tscv}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    {\scriptsize
+        \input{tables/tukeyhsd/training_window.tex}
+    }
+    \caption{Tukey HSD for Training Window - Only Significant Results (10\%)}
+    \label{tab:tukeyhsd_training_window}
+\end{table}
+
 \section{How to add Citations and a References List}
 
 \cite{markowitz1952portfolio} or \cite{sharpe1964capital} or \cite{bruder2013regularization}
 
+\newpage
+\section*{Bibliography}
 \bibliographystyle{apalike}
 \bibliography{bibliography}
+
+\newpage
+\section*{Appendix}
+
+\begin{table}[h!]
+    \centering
+    {\scriptsize
+        \input{tables/time_series/n_tscv.tex}
+    }
+    \caption{Sharpe by Nº of Time-Series Cross-Validations}
+    \label{tab:time_series_n_tscv}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    {\scriptsize
+        \input{tables/time_series/testing_window.tex}
+    }
+    \caption{Sharpe by Days before Rebalancing}
+    \label{tab:time_series_testing_window}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    {\scriptsize
+        \input{tables/time_series/training_window.tex}
+    }
+    \caption{Sharpe by Days in Training Window}
+    \label{tab:time_series_training_window}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    {\scriptsize
+        \input{tables/time_series/tscv_size_multiple.tex}
+    }
+    \caption{Sharpe by Days in Time-Series Cross-Validations as Percentage of Training Days}
+    \label{tab:time_series_tscv_size_multiple}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    {\scriptsize
+        \input{tables/time_series/n_assets.tex}
+    }
+    \caption{Sharpe by Number of Assets}
+    \label{tab:time_series_n_assets}
+\end{table}
+
+\begin{figure}[h]
+    \centering
+    \adjustbox{max size={\textwidth}{.90\textheight}}{
+        \includegraphics{graphics/time_series/n_tscv.png}
+    }
+    \caption{Sharpe by Nº of Time-Series Cross-Validations}
+    \label{fig:time_series_n_tscv}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \adjustbox{max size={\textwidth}{.90\textheight}}{
+        \includegraphics{graphics/time_series/testing_window.png}
+    }
+    \caption{Sharpe by Days before Rebalancing}
+    \label{fig:time_series_testing_window}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \adjustbox{max size={\textwidth}{.90\textheight}}{
+        \includegraphics{graphics/time_series/training_window.png}
+    }
+    \caption{Sharpe by Days in Training Window}
+    \label{fig:time_series_training_window}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \adjustbox{max size={\textwidth}{.90\textheight}}{
+        \includegraphics{graphics/time_series/tscv_size_multiple.png}
+    }
+    \caption{Sharpe by Days in Time-Series Cross-Validations as Percentage of Training Days}
+    \label{fig:time_series_time_series_tscv_size_multiple}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \adjustbox{max size={\textwidth}{.90\textheight}}{
+        \includegraphics{graphics/time_series/n_assets.png}
+    }
+    \caption{Sharpe by Number of Assets}
+    \label{fig:time_series_n_assets}
+\end{figure}
 
 \end{document}

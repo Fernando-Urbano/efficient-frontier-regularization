@@ -29,9 +29,12 @@ if __name__ == "__main__":
         .loc[:"2021-12-31"]
     )
     yearly_performance_metrics = calc_yearly_performance_metrics(integrated_testing_returns)
-    integrated_ids = pd.read_csv("output/simulations_ids.csv")
+    integrated_ids = (
+        pd.read_csv("output/simulations_ids.csv")
+        .assign(id=lambda df: df.id.astype(int))
+    )
     simulations_yearly_performance_metrics = integrated_ids.merge(yearly_performance_metrics, on="id", how="outer")
-    simulations_yearly_performance_metrics.to_csv("output/simulations_yearly_performance_metrics.csv")
+    simulations_yearly_performance_metrics.to_csv("output/simulations_yearly_performance_metrics.csv", index=False)
 
 
 
