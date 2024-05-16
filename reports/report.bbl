@@ -1,13 +1,28 @@
 \begin{thebibliography}{}
 
+\bibitem[Britten-Jones and Neuberger, 2013]{britten2013robustifying}
+Britten-Jones, M. and Neuberger, A. (2013).
+\newblock Robustifying markowitz.
+\newblock {\em Review of Financial Studies}, 26(11):2716--2746.
+
 \bibitem[Bruder et~al., 2013]{bruder2013regularization}
 Bruder, B., Gaussel, N., Richard, J.-C., and Roncalli, T. (2013).
 \newblock Regularization of portfolio allocation.
+
+\bibitem[Campbell and Thompson, 2008]{campbell2008predicting}
+Campbell, J.~Y. and Thompson, S.~B. (2008).
+\newblock Predicting excess stock returns out of sample: Can anything beat the historical average?
+\newblock {\em The Review of Financial Studies}, 21(4):1509--1531.
 
 \bibitem[Markowitz, 1952]{markowitz1952portfolio}
 Markowitz, H. (1952).
 \newblock Portfolio selection.
 \newblock {\em The Journal of Finance}, 7(1):77--91.
+
+\bibitem[Schmid and Trede, 2018]{schmid2018efficient}
+Schmid, W. and Trede, M. (2018).
+\newblock The construction of efficient portfolios: A verification of risk models for investment making.
+\newblock {\em Frontiers in Applied Mathematics and Statistics}, 4.
 
 \bibitem[Sharpe, 1964]{sharpe1964capital}
 Sharpe, W.~F. (1964).
