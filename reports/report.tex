@@ -6,6 +6,8 @@
 \usepackage{adjustbox}
 \usepackage{booktabs}
 \usepackage{makecell}
+\usepackage{placeins}
+
 
 % Set page size and margins
 % Replace `letterpaper' with`a4paper' for UK/EU standard size
@@ -25,10 +27,11 @@
 \begin{document}
 \maketitle
 
+\FloatBarrier
 \subsection*{Material}
 The code to reproduce the results can be found in: \href{https://github.com/Fernando-Urbano/efficient-frontier-regularization}{https://github.com/Fernando-Urbano/efficient-frontier-regularization}
 
-
+\FloatBarrier
 \section{Introduction}
 
 Markovitz's construction of the Efficient Frontier in 1952 is among the most significant improvements in quantitative finance and set the start of the Modern Portfolio Theory \cite{markowitz1952portfolio}.
@@ -43,9 +46,11 @@ With time, the original mean-variance optimization started facing criticism due 
 
 While the original algorithm provides a concise set of hyperparameters, modern applications with regularization techniques require extensive hyperparameter tuning and a gigantic number of possible combinations on how to address the problem. Practitioners often choose one possible set among the vast poll, given limited time to train and analyze results.
 
-The goal of our paper is to dive deeper into the tuning of hyperparameters for RIDGE regularization, tirelessly testing possible combinations of different parameters to arrive at general guidelines on how to approach the problem and which sets generate more favorable results. We aim to provide a comprehensive study of the hyperparameter space of the RMVP, exploring the impact of the number of assets, training size, days until rebalancing (viewed as testing size), number of time-series cross-validation, and cross-validation size.
+The goal of our paper is to dive deeper into the tuning of hyperparameters for Ridge regularization, tirelessly testing possible combinations of different parameters to arrive at general guidelines on how to approach the problem and which sets generate more favorable results. We aim to provide a comprehensive study of the hyperparameter space of the RMVP, exploring the impact of the number of assets, training size, days until rebalancing (viewed as testing size), number of time-series cross-validation, and cross-validation size.
 
+\FloatBarrier
 \section{Research Methodology}
+\FloatBarrier
 \subsection{Mean-Variance Optimization}
 The optimization process is based on finding the weights for assets in a given portfolio that maximize the expected return of the portfolio given a level of risk or minimize the risk of a portfolio given a level of expected return:
 
@@ -57,10 +62,11 @@ $$
 
 In the equation, $w$ is the vector of weights, $\mu$ is the vector of expected returns, $\Sigma$ is the covariance matrix of the returns, and $\sigma^{2}$ is the tolerated level of risk. The first constraint ensures that the risk of the portfolio is below a certain threshold, and the second constraint ensures that the investor uses 100\% (not more or less) of their capital in the allocation.
 
-The Efficient Frontier gives the best allocation for every given risk (variance) level. The curved shape is a consequence of diversification: less than perfect correlation between assets allows for a reduction in the overall risk of the portfolio.
+The Efficient Frontier gives the best allocation for every given risk (variance) level. The curved shape is a consequence of diversification: less than perfect correlation between assets allows for a reduction in the overall risk of the portfolio (Figure \ref{fig:efficient_frontier}).
 
 The Efficient Frontier has two points worth of special attention: the Global Minimum Variance Portfolio (GMV), the leftmost point, and the Tangency Portfolio.
 
+\FloatBarrier
 \subsection{Global Minimum Variance Portfolio}
 The Global Minimum Variance Portfolio (GMV) is the portfolio with the lowest possible variance.
 
@@ -77,6 +83,7 @@ $$
 
 In the equation, $\mathbf{1}$ is a vector of ones and $\Sigma^{-1}$ is the inverse of the covariance matrix of returns.
 
+\FloatBarrier
 \subsection{Tangency Portfolio}
 The Tangency Portfolio is the portfolio that maximizes the Sharpe Ratio \cite{sharpe1964capital}, a measure of risk-adjusted return, defined as the ratio of the excess return of the portfolio over the risk-free rate to the standard deviation of the portfolio (square root of the variance):
 
@@ -97,6 +104,7 @@ $$
 w_{\text{TAN}} = \frac{\Sigma^{-1} \tilde{\mu}}{\mathbf{1}^{T} \Sigma^{-1} \tilde{\mu}}
 $$
 
+\FloatBarrier
 \subsection{Instability and Unpredictability}
 The two formulas give us the optimal weights for the given levels of risk. Any other point in the efficient frontier can be obtained by a linear combination of the GMV and the Tangency Portfolio (Figure \ref{fig:efficient_frontier}).
 
@@ -117,8 +125,9 @@ More specifically, the errors are magnified by the $\Sigma^{-1}$ term in the for
 
 In simpler words, a small difference between the historical and future excess returns ($\tilde{\mu}$) or the covariance matrix ($\Sigma$) leads to a large difference in the optimal weights between the training period and the future period.
 
+\FloatBarrier
 \subsection{Ridge Regularization}
-Ridge Regularization is a technique used to mitigate the problem of instability in the optimization process, by adding a penalty term. The optimized point of minimum variance with RIDGE is called the Regularized Minimum Variance Portfolio (RMVP).
+Ridge Regularization is a technique used to mitigate the problem of instability in the optimization process, by adding a penalty term. The optimized point of minimum variance with Ridge is called the Regularized Minimum Variance Portfolio (RMVP).
 
 $$
 w_{\text{RMVP}} = \argmin_{w} \quad w^{T} \Sigma w + \lambda \|w\|^{2} \quad \quad
@@ -141,7 +150,7 @@ $$
 
 The algorithm reduces the extreme allocations in few assets and decreases the sensitivity of the optimization process to small changes in the estimates.
 
-In practice, the solution vector $w_{\text{RMVP}}$ penalty value is defined by how much the individual weights differ from the equal weight allocation of of $1/n$, where $n$ is the number of assets in the portfolio. Namely, The penalty term in RIDGE is a function of the Euclidean Norm of the vector of weights, which is minimized when $w_i = 1/n$ for all $i$ (Figure \ref{fig:euclidean_norm}).
+In practice, the solution vector $w_{\text{RMVP}}$ penalty value is defined by how much the individual weights differ from the equal weight allocation of of $1/n$, where $n$ is the number of assets in the portfolio. Namely, The penalty term in Ridge is a function of the Euclidean Norm of the vector of weights, which is minimized when $w_i = 1/n$ for all $i$ (Figure \ref{fig:euclidean_norm}).
 
 \begin{figure}[h]
     \centering
@@ -150,6 +159,7 @@ In practice, the solution vector $w_{\text{RMVP}}$ penalty value is defined by h
     \label{fig:euclidean_norm}
 \end{figure}
 
+\FloatBarrier
 \subsection{Methodology}
 In this paper, we explore the hyperparameter space of the RMVP. Using the point of Minimum Variance steady of the Tangency Portfolio is viewed as a better approach, given that historical returns are not good predictors of future returns and we intend to remain agnostic about more other predictions models results, given that the focus should remain in the exploration of the hyperparameter of the mean-variance optimization \cite{campbell2008predicting}.
 
@@ -178,17 +188,19 @@ The simulations provide answer to questions such:
     \item How do moments of financial stress affect the previous questions?
 \end{itemize}
 
-The testing portfolios for each of the combinations are aggregated yearly (123,200 data points), allowing for comparison of Sharpe Ratio, volatility and returns between the portfolios. The results are analyzed using multivariate ANOVA and Tukey HSD pairwise tests.
+The testing portfolios for each of the combinations are aggregated yearly, allowing for comparison of Sharpe Ratio, volatility and returns between the portfolios (leading to 123,200 data points for the analysis). The results are analyzed using multivariate ANOVA and Tukey HSD pairwise tests.
 
+\FloatBarrier
 \section{Data}
 The data is collected from the \hyperlink{https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html}{Kenneth French Website}. The website provides daily industry returns in tables dividing the industries in 5, 10, 12, 17, 30, 38, 48, 49 assets from 1926 to 2024 (updated regularly). Each of those tables is used as one of the possible $n$ (number of assets) in the portfolio. The risk-free rate is also provided in the website, inside the "Fama/French 3 Factors" table, and used to subtract the returns.
 
+\FloatBarrier
 \section{Results}
-Every factor is significant in explaining yearly annualized Sharpe Ratios (Table \ref{tab:anova_multi_factor}) in the ANOVA without interactions. As expected, the results are highly dependable on the number of assets and year, since those factors dictate which returns are being used.
+Every factor is shown to be significant in explaining yearly annualized Sharpe Ratios as shown in the ANOVA without interactions (Table \ref{tab:anova_multi_factor}). As expected, the results are highly dependable on the number of assets and year, since those factors dictate which returns are being used.
 
-Training Window and Number of Time-Series Cross-Validation are the factors among the ones that can be optimized by practitioners, which represent the most significant impact on the Sharpe Ratio.
+Among the factors that can be optimized by practitioners, Training Window and Number of Time-Series Cross-Validation are the ones which represent the most significant impact on the Sharpe Ratio.
 
-The comparison between the smallest training window tested, 63 days (3 months), and the largest two training windows tested, 252 and 504 days (1 and 2 years), show a significant difference in every Sharpe ratio (Table \ref{tab:tukeyhsd_training_window}) favorable tot the larger training windows.
+The comparison between training window of 63 days (3 months), and the largest two training windows tested, 252 and 504 days (1 and 2 years), show a significant difference in every Sharpe Ratio (Table \ref{tab:tukeyhsd_training_window}) favorable to the larger training windows.
 
 Using 1 time-series cross validation fold shows a significantly higher average performance when compared to any other number of folds (Table \ref{tab:tukeyhsd_n_tscv}). Nonetheless, the result is accompanied by a higher standard deviation of the forecasted Sharpe Ratio, which showcases a trade-off between performance and stability (Appendix Figure \ref{fig:time_series_n_tscv} and Table \ref{tab:time_series_n_tscv}).
 
@@ -196,9 +208,9 @@ The pairwise comparison of year is omitted, since it does not provide useful inf
 
 The pairwise comparison is not significant for testing sample (days until rebalancing) and cross-validation size as percentage of training days (Appendix Figure \ref{fig:time_series_tscv_size_multiple} and Table \ref{tab:time_series_tscv_size_multiple}). The absence of significance for testing sample show practitioners that, unless changes in expected return or risk are provided, continous rebalancing is not favorable accounting for transaction costs (Appendix Figure \ref{fig:time_series_testing_window} and Table \ref{tab:time_series_testing_window}).
 
-In the Appendix, detailed results are provided by year and in aggregate of the Sharpe Ratio statistics.
+In the Appendix, detailed results are provided by year and in aggregate of the Sharpe Ratio statistics for each of the factors tested as well as all the Tukey HSD pairwise tests (significant and non-significant).
 
-\begin{table}[h]
+\begin{table}[h!]
     \label{tab:anova_multi_factor}
     \centering
     {\scriptsize
@@ -207,7 +219,7 @@ In the Appendix, detailed results are provided by year and in aggregate of the S
     \caption{ANOVA without Interaction}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
     \label{tab:tukeyhsd_n_assets}
     \centering
     {\scriptsize
@@ -216,7 +228,7 @@ In the Appendix, detailed results are provided by year and in aggregate of the S
     \caption{Tukey HSD for Number of Assets - Only Significant Results (10\% p-value)}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
     \label{tab:tukeyhsd_n_tscv}
     \centering
     {\scriptsize
@@ -225,7 +237,7 @@ In the Appendix, detailed results are provided by year and in aggregate of the S
     \caption{Tukey HSD for Nº TSCV - Only Significant Results (10\% p-value)}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
     \label{tab:tukeyhsd_training_window}
     \centering
     {\scriptsize
@@ -239,7 +251,10 @@ In the Appendix, detailed results are provided by year and in aggregate of the S
 \bibliography{bibliography}
 
 \newpage
+\FloatBarrier
 \section*{Appendix}
+\FloatBarrier
+\subsection*{Time-Series Analysis}
 
 \begin{table}[h]
     \label{tab:time_series_n_tscv}
@@ -330,5 +345,54 @@ In the Appendix, detailed results are provided by year and in aggregate of the S
     }
     \caption{Sharpe by Number of Assets}
 \end{figure}
+
+\FloatBarrier
+\subsection*{Tukey HSD Pairwise Tests - All Results}
+
+\begin{table}[h]
+    \label{tab:tukeyhsd_all_training_window}
+    \centering
+    {\scriptsize
+        \input{tables/tukeyhsd/training_window_all.tex}
+    }
+    \caption{Tukey HSD Pairwise Test for Training Windows ordered by P-Value}
+\end{table}
+
+\begin{table}[h]
+    \label{tab:tukeyhsd_all_testing_window}
+    \centering
+    {\scriptsize
+        \input{tables/tukeyhsd/testing_window_all.tex}
+    }
+    \caption{Tukey HSD Pairwise Test for Days before Rebalancing ordered by P-Value}
+\end{table}
+
+\begin{table}[h]
+    \label{tab:tukeyhsd_all_tscv_size_multiple}
+    \centering
+    {\scriptsize
+        \input{tables/tukeyhsd/tscv_size_multiple_all.tex}
+    }
+    \caption{Tukey HSD Pairwise Test for Time-Series Cross-Validations as Percentage of Training Days ordered by P-Value}
+\end{table}
+
+\begin{table}[h]
+    \label{tab:tukeyhsd_all_n_assets}
+    \centering
+    {\scriptsize
+        \input{tables/tukeyhsd/n_assets_all.tex}
+    }
+    \caption{Tukey HSD Pairwise Test for Nº of Assets ordered by P-Value}
+\end{table}
+
+\begin{table}[h]
+    \label{tab:tukeyhsd_all_n_tscv}
+    \centering
+    {\scriptsize
+        \input{tables/tukeyhsd/n_tscv_all.tex}
+    }
+    \caption{Tukey HSD Pairwise Test for Nº of Time-Series Cross-Validations ordered by P-Value}
+\end{table}
+
 
 \end{document}

@@ -27,6 +27,11 @@ Downloads data from the Kenneth French website and saves into data:
 python data_download.py
 ```
 
+Create a SQLite database and table for the simulations by running the following script:
+```bash
+python database_create.py
+```
+
 Create the simulations for the portfolio (*3 to 4 days to complete in a normal computer*):
 ```bash
 python simulations_creation.py
@@ -53,6 +58,11 @@ jupyter nbconvert --to notebook --execute simulations_analysis_distributions.ipy
 
 ```bash
 jupyter nbconvert --to notebook --execute simulations_analysis_time_series.ipynb
+```
+
+Recreate the illustrations of the report by running the following:
+```bash
+jupyter nbconvert --to notebook --execute illustrations.ipynb
 ```
 
 ## Introduction
