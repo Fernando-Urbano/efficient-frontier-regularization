@@ -1,76 +1,16 @@
-# Exploring Hyperparameter Spaces: A Comprehensive Study of Ridge Regularization in Mean-Variance Optimization
+---
+author:
+- Fernando Urbano
+bibliography:
+- bibliography.bib
+title: "Exploring Hyperparameter Spaces: A Comprehensive Study of Ridge
+  Regularization in Mean-Variance Optimization"
+---
 
-**Fernando Urbano**
+## Material {#material .unnumbered}
 
-Detailed report available in [reports/report.pdf](reports/report.pdf)
-
-## Code
-### Create Virtual Environment
-Open your terminal and run the following command:
-```bash
-conda create --name markowitz python=3.12.2
-```
-
-Deactivate any existing virtual environment:
-```bash
-conda deactivate
-```
-
-Install packages for the virtual environment:
-```bash
-pip install -r requirements.txt
-```
-
-### Run the following scripts in order
-Downloads data from the Kenneth French website and saves into data:
-```bash
-python data_download.py
-```
-
-Create a SQLite database and table for the simulations by running the following script:
-```bash
-python database_create.py
-```
-
-Create the simulations for the portfolio (*3 to 4 days to complete in a normal computer*):
-```bash
-python simulations_creation.py
-```
-
-Integrate the results into time-series:
-```bash
-python simulation_integration.py
-```
-
-Divide the time-series into annual portions and calculate the yearly performance metrics:
-```bash
-python simulation_yearly_division.py
-```
-
-Create analysis by running the following jupyter notebooks:
-```bash
-jupyter nbconvert --to notebook --execute simulations_analysis_anova.ipynb
-```
-
-```bash
-jupyter nbconvert --to notebook --execute simulations_analysis_distributions.ipynb
-```
-
-```bash
-jupyter nbconvert --to notebook --execute simulations_analysis_time_series.ipynb
-```
-
-Recreate the illustrations of the report by running the following:
-```bash
-jupyter nbconvert --to notebook --execute illustrations.ipynb
-```
-
-If needed, run the following to update the report.md given changes in report.tex:
-```bash
-pandoc -s reports/report.tex -o report_raw.md
-```
-
-`pandoc` can be installed via brew.
+The code to reproduce the results can be found in:
+<https://github.com/Fernando-Urbano/efficient-frontier-regularization>
 
 # Introduction
 
@@ -138,7 +78,9 @@ less) of their capital in the allocation.
 The Efficient Frontier gives the best allocation for every given risk
 (variance) level. The curved shape is a consequence of diversification:
 less than perfect correlation between assets allows for a reduction in
-the overall risk of the portfolio.
+the overall risk of the portfolio (Figure
+[1](#fig:efficient_frontier){reference-type="ref"
+reference="fig:efficient_frontier"}).
 
 The Efficient Frontier has two points worth of special attention: the
 Global Minimum Variance Portfolio (GMV), the leftmost point, and the
@@ -184,12 +126,15 @@ $$w_{\text{TAN}} = \frac{\Sigma^{-1} \tilde{\mu}}{\mathbf{1}^{T} \Sigma^{-1} \ti
 
 The two formulas give us the optimal weights for the given levels of
 risk. Any other point in the efficient frontier can be obtained by a
-linear combination of the GMV and the Tangency Portfolio.
+linear combination of the GMV and the Tangency Portfolio (Figure
+[1](#fig:efficient_frontier){reference-type="ref"
+reference="fig:efficient_frontier"}).
 
 $$w_{\text{optimal}} = \alpha w_{\text{GMV}} + (1 - \alpha) w_{\text{TAN}} \quad \quad \alpha > 0$$
 
 ![Efficient Frontier as a linear combination of the GMV and the Tangency
-Portfolio](reports/graphics/illustrations/efficient_frontier.png)
+Portfolio](graphics/illustrations/efficient_frontier.png){#fig:efficient_frontier
+width="80%"}
 
 However, the process of estimating expected returns and the covariance
 matrix from historical data encounters significant challenges. These
@@ -248,10 +193,12 @@ defined by how much the individual weights differ from the equal weight
 allocation of of $1/n$, where $n$ is the number of assets in the
 portfolio. Namely, The penalty term in Ridge is a function of the
 Euclidean Norm of the vector of weights, which is minimized when
-$w_i = 1/n$ for all $i$.
+$w_i = 1/n$ for all $i$ (Figure
+[2](#fig:euclidean_norm){reference-type="ref"
+reference="fig:euclidean_norm"}).
 
 ![Euclidean Norm as a Function of Weights' Standard
-Deviation](reports/graphics/illustrations/euclidean_norm.png){#fig:euclidean_norm
+Deviation](graphics/illustrations/euclidean_norm.png){#fig:euclidean_norm
 width="80%"}
 
 ## Methodology
@@ -331,11 +278,12 @@ $n$ (number of assets) in the portfolio. The risk-free rate is also
 provided in the website, inside the \"Fama/French 3 Factors\" table, and
 used to subtract the returns.
 
-
 # Results
 
 Every factor is shown to be significant in explaining yearly annualized
-Sharpe Ratios as shown in the ANOVA without interactions. As expected, the results are
+Sharpe Ratios as shown in the ANOVA without interactions (Table
+[\[tab:anova_multi_factor\]](#tab:anova_multi_factor){reference-type="ref"
+reference="tab:anova_multi_factor"}). As expected, the results are
 highly dependable on the number of assets and year, since those factors
 dictate which returns are being used.
 
@@ -345,12 +293,21 @@ represent the most significant impact on the Sharpe Ratio.
 
 The comparison between training window of 63 days (3 months), and the
 largest two training windows tested, 252 and 504 days (1 and 2 years),
-show a significant difference in every Sharpe Ratio favorable to the larger
+show a significant difference in every Sharpe Ratio (Table
+[\[tab:tukeyhsd_training_window\]](#tab:tukeyhsd_training_window){reference-type="ref"
+reference="tab:tukeyhsd_training_window"}) favorable to the larger
 training windows.
 
 Using 1 time-series cross validation fold shows a significantly higher
-average performance when compared to any other number of folds. Nonetheless, the result is accompanied by a higher standard deviation of the forecasted Sharpe
-Ratio, which showcases a trade-off between performance and stability and Table.
+average performance when compared to any other number of folds (Table
+[\[tab:tukeyhsd_n_tscv\]](#tab:tukeyhsd_n_tscv){reference-type="ref"
+reference="tab:tukeyhsd_n_tscv"}). Nonetheless, the result is
+accompanied by a higher standard deviation of the forecasted Sharpe
+Ratio, which showcases a trade-off between performance and stability
+(Appendix Figure [3](#fig:time_series_n_tscv){reference-type="ref"
+reference="fig:time_series_n_tscv"} and Table
+[\[tab:time_series_n_tscv\]](#tab:time_series_n_tscv){reference-type="ref"
+reference="tab:time_series_n_tscv"}).
 
 The pairwise comparison of year is omitted, since it does not provide
 useful information, given that the results are highly dependent on the
@@ -358,9 +315,85 @@ returns of the assets in the year, and the comparison is not meaningful.
 
 The pairwise comparison is not significant for testing sample (days
 until rebalancing) and cross-validation size as percentage of training
-days. The absence of significance for testing sample show practitioners that, unless changes in expected return or risk are provided, continous rebalancing is not
-favorable accounting for transaction costs.
+days (Appendix Figure
+[6](#fig:time_series_tscv_size_multiple){reference-type="ref"
+reference="fig:time_series_tscv_size_multiple"} and Table
+[\[tab:time_series_tscv_size_multiple\]](#tab:time_series_tscv_size_multiple){reference-type="ref"
+reference="tab:time_series_tscv_size_multiple"}). The absence of
+significance for testing sample show practitioners that, unless changes
+in expected return or risk are provided, continous rebalancing is not
+favorable accounting for transaction costs (Appendix Figure
+[4](#fig:time_series_testing_window){reference-type="ref"
+reference="fig:time_series_testing_window"} and Table
+[\[tab:time_series_testing_window\]](#tab:time_series_testing_window){reference-type="ref"
+reference="tab:time_series_testing_window"}).
 
 In the Appendix, detailed results are provided by year and in aggregate
 of the Sharpe Ratio statistics for each of the factors tested as well as
 all the Tukey HSD pairwise tests (significant and non-significant).
+
+[]{#tab:anova_multi_factor label="tab:anova_multi_factor"}
+
+[]{#tab:tukeyhsd_n_assets label="tab:tukeyhsd_n_assets"}
+
+[]{#tab:tukeyhsd_n_tscv label="tab:tukeyhsd_n_tscv"}
+
+[]{#tab:tukeyhsd_training_window label="tab:tukeyhsd_training_window"}
+
+# Appendix {#appendix .unnumbered}
+
+## Time-Series Analysis {#time-series-analysis .unnumbered}
+
+[]{#tab:time_series_n_tscv label="tab:time_series_n_tscv"}
+
+[]{#tab:time_series_testing_window
+label="tab:time_series_testing_window"}
+
+[]{#tab:time_series_training_window
+label="tab:time_series_training_window"}
+
+[]{#tab:time_series_tscv_size_multiple
+label="tab:time_series_tscv_size_multiple"}
+
+[]{#tab:time_series_n_assets label="tab:time_series_n_assets"}
+
+<figure id="fig:time_series_n_tscv">
+
+<figcaption>Sharpe by Nº of Time-Series Cross-Validations</figcaption>
+</figure>
+
+<figure id="fig:time_series_testing_window">
+
+<figcaption>Sharpe by Days before Rebalancing</figcaption>
+</figure>
+
+<figure id="fig:time_series_training_window">
+
+<figcaption>Sharpe by Days in Training Window</figcaption>
+</figure>
+
+<figure id="fig:time_series_tscv_size_multiple">
+
+<figcaption>Sharpe by Days in Time-Series Cross-Validations as
+Percentage of Training Days</figcaption>
+</figure>
+
+<figure id="fig:time_series_n_assets">
+
+<figcaption>Sharpe by Number of Assets</figcaption>
+</figure>
+
+## Tukey HSD Pairwise Tests - All Results {#tukey-hsd-pairwise-tests---all-results .unnumbered}
+
+[]{#tab:tukeyhsd_all_training_window
+label="tab:tukeyhsd_all_training_window"}
+
+[]{#tab:tukeyhsd_all_testing_window
+label="tab:tukeyhsd_all_testing_window"}
+
+[]{#tab:tukeyhsd_all_tscv_size_multiple
+label="tab:tukeyhsd_all_tscv_size_multiple"}
+
+[]{#tab:tukeyhsd_all_n_assets label="tab:tukeyhsd_all_n_assets"}
+
+[]{#tab:tukeyhsd_all_n_tscv label="tab:tukeyhsd_all_n_tscv"}
