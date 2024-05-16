@@ -96,7 +96,7 @@ The Global Minimum Variance Portfolio (GMV) is the portfolio with the lowest pos
 Given the convex nature of the optimization problem, it is possible to find the $w_{\text{GMV}}$ with a closed form solution:
 
 $$
-w_{\text{GMV}} = \argmin_{w} \quad w^{T} \Sigma w \quad \quad
+w_{\text{GMV}} = \text{argmin}_{w} \quad w^{T} \Sigma w \quad \quad
 \text{s.t.} \sum_{i=1}^{n} w_{i} = 1
 $$
 
@@ -146,14 +146,14 @@ In simpler words, a small difference between the historical and future excess re
 Ridge Regularization is a technique used to mitigate the problem of instability in the optimization process, by adding a penalty term. The optimized point of minimum variance with RIDGE is called the Regularized Minimum Variance Portfolio (RMVP).
 
 $$
-w_{\text{RMVP}} = \argmin_{w} \quad w^{T} \Sigma w + \lambda \|w\|^{2} \quad \quad
+w_{\text{RMVP}} = \text{argmin}_{w} \quad w^{T} \Sigma w + \lambda \|w\|^{2} \quad \quad
 \text{s.t.} \sum_{i=1}^{n} w_{i} = 1
 $$
 
 The $\lambda$ term is the hyperparameter that controls the trade-off between the variance of the portfolio and the penalty term. As in regression problems, Ridge has the advantage of providing a closed-form solution:
 
 $$
-w_{\text{RMVP}} = \argmin_{w} \quad w^{T} \Sigma w + \lambda w^T w
+w_{\text{RMVP}} = \text{argmin}_{w} \quad w^{T} \Sigma w + \lambda w^T w
 $$
 
 $$
