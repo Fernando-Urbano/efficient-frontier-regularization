@@ -6,14 +6,21 @@ Detailed report available in [reports/report.pdf](reports/report.pdf)
 
 ## Code
 ### Create Virtual Environment
-Open your terminal and run the following command:
-```bash
-conda create --name markowitz python=3.12.2
-```
+Open your terminal and run the following commands:
 
 Deactivate any existing virtual environment:
 ```bash
 conda deactivate
+```
+
+Create `markowitz` virtual environment:
+```bash
+conda create --name markowitz python=3.12.2
+```
+
+Activate `markowitz` virtual environment:
+```bash
+conda activate markowitz
 ```
 
 Install packages for the virtual environment:
