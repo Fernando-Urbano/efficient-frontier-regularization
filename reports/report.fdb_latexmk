@@ -1,14 +1,14 @@
 # Fdb version 4
-["bibtex report"] 1715877024 "report.aux" "report.bbl" "report" 1715877028 0
+["bibtex report"] 1716303904 "report.aux" "report.bbl" "report" 1716303991 0
   "./bibliography.bib" 1715870473 2369 fb3c82333d9f7cfae212012596fa9a5f ""
   "/usr/local/texlive/2023/texmf-dist/bibtex/bst/base/apalike.bst" 1292289607 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "report.aux" 1715877027 7804 cff9f77ec739d2d288683c5e083fe666 "pdflatex"
+  "report.aux" 1716303991 7804 cff9f77ec739d2d288683c5e083fe666 "pdflatex"
   (generated)
   "report.bbl"
   "report.blg"
   (rewritten before read)
-["pdflatex"] 1715877024 "/Users/fernandorochacorreaurbano/Desktop/Mathematical Foundations of Machine Learning/efficient-frontier-regularization/reports/report.tex" "report.pdf" "report" 1715877028 0
-  "/Users/fernandorochacorreaurbano/Desktop/Mathematical Foundations of Machine Learning/efficient-frontier-regularization/reports/report.tex" 1715877020 20584 219c6c9b1830481c1e26b846094e14b9 ""
+["pdflatex"] 1716303988 "/Users/fernandorochacorreaurbano/Desktop/Mathematical Foundations of Machine Learning/efficient-frontier-regularization/reports/report.tex" "report.pdf" "report" 1716303991 0
+  "/Users/fernandorochacorreaurbano/Desktop/Mathematical Foundations of Machine Learning/efficient-frontier-regularization/reports/report.tex" 1716303987 20878 bb81f170b2e241c95d39cad3b361d2d5 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/tcrm0700.tfm" 1136768653 1536 73da8e8f1d2a4c957d51ca133585586b ""
@@ -127,10 +127,10 @@
   "graphics/time_series/testing_window.png" 1715572917 374940 d939b5a3cdb1d62e2db11fc4819063d6 ""
   "graphics/time_series/training_window.png" 1715572920 328324 2ed67526ebc3052e1487d1e486f03e4d ""
   "graphics/time_series/tscv_size_multiple.png" 1715572923 330873 c76ef59fccea557a2a3fca9172fd8627 ""
-  "report.aux" 1715877027 7804 cff9f77ec739d2d288683c5e083fe666 "pdflatex"
-  "report.bbl" 1715877024 1335 b3f8c9a8b8c94f1099857c00ad2d9805 "bibtex report"
-  "report.out" 1715877027 1457 38f00c3913aee73f51bb53104548dbd9 "pdflatex"
-  "report.tex" 1715877020 20584 219c6c9b1830481c1e26b846094e14b9 ""
+  "report.aux" 1716303991 7804 cff9f77ec739d2d288683c5e083fe666 "pdflatex"
+  "report.bbl" 1716303904 1335 b3f8c9a8b8c94f1099857c00ad2d9805 "bibtex report"
+  "report.out" 1716303991 1457 38f00c3913aee73f51bb53104548dbd9 "pdflatex"
+  "report.tex" 1716303987 20878 bb81f170b2e241c95d39cad3b361d2d5 ""
   "tables/anova/no_interaction.tex" 1715875458 564 c50a23b15d57203af8544e83878beeae ""
   "tables/time_series/n_assets.tex" 1715572928 1113 ee62e296ae230413a02e0266abfbb51a ""
   "tables/time_series/n_tscv.tex" 1715572916 1623 fe774fcd1a79bea8afc3718c4247d99e ""

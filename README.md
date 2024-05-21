@@ -29,6 +29,16 @@ pip install -r requirements.txt
 ```
 
 ### Run the following scripts in order
+#### Skip calculation generation?
+If you want to skip the calculation of simulations and handle the current results, you can find all the databases in the Google Drive:
+
+https://drive.google.com/drive/folders/17q4Golm0GLAndyc20SKOUCcmOOtqyd91?usp=sharing
+
+The `.csv` (660MB) files should be placed in `output/` directory and the `portfolio.db` simulations (3.4GB) in the main folder.
+
+If you decide to place that, you can start running by running the Jupyter Notebooks.
+
+#### Download Data and Run Simulations
 Downloads data from the Kenneth French website and saves into data:
 ```bash
 python data_download.py
@@ -54,6 +64,7 @@ Divide the time-series into annual portions and calculate the yearly performance
 python simulation_yearly_division.py
 ```
 
+#### Run Analysis
 Create analysis by running the following jupyter notebooks:
 ```bash
 jupyter nbconvert --to notebook --execute simulations_analysis_anova.ipynb
@@ -80,7 +91,6 @@ pandoc -s reports/report.tex -o report_raw.md
 `pandoc` can be installed via brew.
 
 # Introduction
-
 Markovitz's construction of the Efficient Frontier in 1952 is among the
 most significant improvements in quantitative finance and set the start
 of the Modern Portfolio Theory [@markowitz1952portfolio].
